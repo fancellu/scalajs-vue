@@ -18,13 +18,35 @@
   	color: #7f8c8d;
   	text-decoration: line-through;
    }
-   
+   .bar {
+	    transition: width 0.5s;
+	    -webkit-transition: width 0.5s;
+	    -moz-transition: width 0.5s; 
+	    -o-transition: width 0.5s;
+	    height: 20px;
+	    background: black;
+	}
 .bounce-enter {
+  -webkit-animation: bounce-in .5s;
   animation: bounce-in .5s;
 }
 .bounce-leave {
+  -webkit-animation: bounce-out .5s; 
   animation: bounce-out .5s;
 }
+
+@-webkit-keyframes bounce-in {
+  0% {
+    -webkit-transform: scale(0);
+  }
+  50% {
+    -webkit-transform: scale(1.2);
+  }
+  100% {
+    -webkit-transform: scale(1);
+  }
+}
+
 @keyframes bounce-in {
   0% {
     transform: scale(0);
@@ -36,6 +58,16 @@
     transform: scale(1);
   }
 }
+
+@-webkit-keyframes bounce-out {
+  0% {
+    -webkit-transform: scale(1);
+  }  
+  100% {
+    -webkit-transform: scale(0);
+  }
+}
+
 @keyframes bounce-out {
   0% {
     transform: scale(1);
@@ -67,6 +99,11 @@
   
   <div style="clear:left">
   Using a v-text directive title=<span v-text="title"></span>
+  <div>Smooth CSS animation: 
+        <input type="button" value="+" v-on="click: barValue += 50"/>
+        <input type="button" value="-" v-on="click: barValue -= 50">
+    </div>
+   <div class="bar" v-style="{ width: barValue + 'px' }"></div>
   <div v-text="'Using a v-text directive with inline expression, title='+title"></div>
   <div>Title reversed={{title | reverse}}</div>
   <div>Title wrapper={{title |  wrap '<<' '>>'}}</div>

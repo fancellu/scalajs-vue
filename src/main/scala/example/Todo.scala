@@ -56,7 +56,8 @@ object Todo extends {
         literal(el="#demo",
           data=literal(
                 title="Todo App",
-                todos=tasks.map(content=>literal(done=content==tasks.head,content=content)),                                
+                todos=tasks.map(content=>literal(done=content==tasks.head,content=content)), 
+                barValue= 100,
                 n=0    
                ),
                // js.ThisFunction would be fine, just trying to be more type specific  
