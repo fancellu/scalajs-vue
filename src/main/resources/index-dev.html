@@ -131,12 +131,13 @@
 
 <!--  vue end -->
      // custom filter to pull out field
-     // should see if I can do this on Scala side TODO
-	Vue.filter('extract', function (value, keyToExtract) {
-	  return value.map(function (item) {
-	    return item[keyToExtract]
-	  })
-	})
+     // Now done in Scala.
+
+//Vue.filter('extract', function (value, keyToExtract) {
+//	  return value.map(function (item) {
+//    return item[keyToExtract]
+//	  })
+//	})
 		// we get DemoVue back from Scala, then use it
     var demo=example.Todo().main();
     demo.title="Todo Todo Todo"

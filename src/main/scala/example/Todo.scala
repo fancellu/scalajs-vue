@@ -70,7 +70,10 @@ object Todo extends {
           computed=literal(todosFiltered=(demoVue:DemoVue)=> demoVue.todos.map(_.content)),               
  
           filters=literal(reverse=((value:js.Any)=>value.toString.reverse), 
-                         wrap=(value:js.Any,begin:String, end:String)=>begin+value.toString+end),                         
+                         wrap=(value:js.Any,begin:String, end:String)=>begin+value.toString+end,
+                         extract=(array:js.Array[js.Dynamic],field:String)=>
+                           if (js.isUndefined(array)) array else array.map(_.selectDynamic(field))                           
+                         ),                         
           events=literal(greeting= ((demoVue:DemoVue,msg:js.Any)=> println(s"Greeting $msg")):js.ThisFunction,
                          greeting2= (msg:js.Any)=> println(s"Greeting2 $msg")
               ),
