@@ -24,7 +24,7 @@ If you open
 
 ## Development
 
-If you change your source HTML (inside `/src/main/resources`) or Scala (inside `/src/main/scala/examples/Todo.scala`, sbt will recompile as needed. 
+If you change your source HTML (inside `/src/main/resources`) or Scala (inside `/src/main/scala/example/Todo.scala`, sbt will recompile as needed. 
 You then just have to refresh the page to see the new version. Hopefully having an example application will make it clearer on how to use Vue from Scala, i.e. monkey see, monkey do.
 
 ## The optimized version
