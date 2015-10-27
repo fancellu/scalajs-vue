@@ -3,6 +3,8 @@
 
 ## Scala.js bindings for Vue.js and an example application 
 
+[https://jitpack.io/#fancellu/scalajs-vue](https://jitpack.io/#fancellu/scalajs-vue)
+
 [![Build Status](https://travis-ci.org/fancellu/scalajs-vue.svg?branch=master)](https://travis-ci.org/fancellu/scalajs-vue)
 
 Example app showing the use of [Scala.js](http://www.scala-js.org/) with [Vue.js](http://vuejs.org/) 
