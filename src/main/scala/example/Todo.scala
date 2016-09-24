@@ -6,6 +6,7 @@ import dom.ext.Ajax
 import scalajs.js
 import js.Dynamic.literal
 import com.felstar.scalajs.vue._
+import js.annotation.JSName
 
 @JSExport
 object Todo extends {
@@ -27,7 +28,7 @@ object Todo extends {
       var done:Boolean=js.native
       var content:String=js.native
     }
-    @js.native    
+   
     object DemoVueTodo{
       def apply(done:Boolean,content:String)=literal(done=done,content=content).asInstanceOf[DemoVueTodo]
     }
