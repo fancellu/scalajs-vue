@@ -26,13 +26,12 @@ import js.annotation.JSName
     def $watch(expOrFn:js.Any,callback:Callback):Unwatch=js.native
     def $watch(expOrFn:js.Any,callback:Callback,options:js.Any):Unwatch=js.native
     def $get(exp:String):js.Any=js.native
-    def $set(keypath:String,value:js.Any):Unit=js.native
+    def $set(target:js.Any,key:js.Any, value:js.Any):Unit=js.native
+    def $delete(target:js.Any,key:js.Any):Unit=js.native
     def $add(key:String,value:js.Any):Unit=js.native
-    def $delete(key:String):Unit=js.native
     def $eval(exp:String):js.Any=js.native
     def $interpolate(templateString:String):js.Any=js.native
-    def $log(keypath:String):Unit=js.native
-    def $log():Unit=js.native
+
       // Events
     def $dispatch(event:String):Unit=js.native
     def $dispatch(event:String,args:js.Any):Unit=js.native
@@ -87,26 +86,22 @@ import js.annotation.JSName
      def transition(id:String):js.Any=js.native
      def transition(id:String,definition:js.Any):js.Any=js.native
      def partial(id:String):js.Any=js.native
-     def partial(id:String,template:String):js.Any=js.native          
+     def partial(id:String,template:String):js.Any=js.native
      def use(plugin:js.Any):js.Any=js.native
      def use(plugin:js.Any,args:js.Any*):js.Any=js.native
+     def set(target:js.Any,key:js.Any, value:js.Any):Unit=js.native
+     def delete(target:js.Any,key:js.Any):Unit=js.native
     }
 
- @js.native
-    trait VueArray[T] extends js.Array[T]{
-      def $set(idx:Int,obj:T):Unit=js.native      
-      def $remove(idx:Int):Unit=js.native
-    }
- 
    @js.native
    class Directive extends js.Object {
-    val el:dom.raw.Element =js.native
-    val vm:Vue =js.native
-    val expression:js.Any =js.native
-    val arg:String =js.native
-    val raw:String =js.native
-    val name:String =js.native   
+    val name:String =js.native
+    val rawName:String =js.native
+    val value:String =js.native
+    val expression:String =js.native
+    val modifiers:js.Any =js.native
+    val `def`:js.Any =js.native
    }
- 
- 
+
+
 
