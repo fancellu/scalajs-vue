@@ -9,14 +9,12 @@ import scalajs.js
 import js.Dynamic.literal
 import com.felstar.scalajs.vue._
 import org.scalajs.dom.raw.HTMLElement
+import js.annotation._
 
-import js.annotation.JSName
-
-@JSExport
+@JSExportTopLevel("example.Todo")
 object Todo extends {
-  
     @js.native
-  trait DemoVue extends Vue{
+    trait DemoVue extends Vue{
       var title:String=js.native
       var n:Double=js.native
       var todos:js.Array[DemoVueTodo]=js.native
@@ -34,7 +32,7 @@ object Todo extends {
       def apply(done:Boolean,content:String)=literal(done=done,content=content).asInstanceOf[DemoVueTodo]
     }
     
-  @JSExport
+ @JSExport
    // we return the DemoVue so we can use it back in JS
    // could have returned raw Vue of course
   def main():DemoVue = {
