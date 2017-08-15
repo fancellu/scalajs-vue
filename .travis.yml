@@ -2,4 +2,4 @@ language: scala
 script:
   - sbt fullOptJS 
 scala:
-   - 2.11.8
+   - 2.12.3
