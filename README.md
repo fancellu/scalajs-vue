@@ -33,6 +33,8 @@ If you open
 If you change your source HTML (inside `/src/main/resources`) or Scala (inside `/src/main/scala/example/Todo.scala`, sbt will recompile as needed. 
 You then just have to refresh the page to see the new version. Hopefully having an example application will make it clearer on how to use Vue from Scala, i.e. monkey see, monkey do.
 
+Open the browser to  http://localhost:12345/target/scala-2.12/classes/index-dev.html
+
 ## The optimized version
 
 Run `sbt fullOptJS` and open up `index-opt.html` for an optimized version
