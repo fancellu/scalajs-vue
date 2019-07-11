@@ -1,20 +1,12 @@
-import com.lihaoyi.workbench.Plugin._
-
-enablePlugins(ScalaJSPlugin)
-
-workbenchSettings
+enablePlugins(ScalaJSPlugin, WorkbenchPlugin)
 
 name := "Scala.js+Vue.js example"
 
-version := "2.2.4"
+version := "2.6.10"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.8"
 
 libraryDependencies ++= Seq(
-  "org.scala-js" %%% "scalajs-dom" % "0.9.1"
+  "org.scala-js" %%% "scalajs-dom" % "0.9.7"
 )
-
-bootSnippet := ""
-
-updateBrowsers <<= updateBrowsers.triggeredBy(fastOptJS in Compile)
 

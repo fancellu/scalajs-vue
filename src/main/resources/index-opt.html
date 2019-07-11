@@ -18,32 +18,22 @@
   	color: #7f8c8d;
   	text-decoration: line-through;
    }
-   
-.bounce-enter {
-  animation: bounce-in .5s;
-}
-.bounce-leave {
-  animation: bounce-out .5s;
-}
-@keyframes bounce-in {
-  0% {
-    transform: scale(0);
+   .bar {
+	    transition: width 0.5s;
+	    -webkit-transition: width 0.5s;
+	    -moz-transition: width 0.5s; 
+	    -o-transition: width 0.5s;
+	    height: 20px;
+	    background: black;
+	}
+
+  .fade-enter-active, .fade-leave-active {
+      transition: opacity .5s
   }
-  50% {
-    transform: scale(1.2);
+  .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+      opacity: 0
   }
-  100% {
-    transform: scale(1);
-  }
-}
-@keyframes bounce-out {
-  0% {
-    transform: scale(1);
-  }  
-  100% {
-    transform: scale(0);
-  }
-}
+
   </style>
 </head>
 <body>
@@ -52,14 +42,16 @@
 <div id="demo">
   <div style="float:left;height:400px;overflow: auto;">
 	  Title=<input v-model="title"/>
-	  <ol>	    	    
-	    <li v-transition="bounce" v-repeat="todos">
-	      <span v-on="click: done = !done" class="{{done ? 'done' : ''}}">
-	      {{content}}	      
-	      </span>	      
-	      <button v-on="click:remove($index)">Remove</button>
-	     </li>	    
-	  </ol>
+
+        <transition-group name="fade" tag="ol">
+            <li v-for="(todo,index) in todos" :key="todo">
+              <span @click="todo.done = !todo.done" :class="{done: todo.done}">
+                {{todo.content}}
+                <button @click="remove(index)">Remove</button>
+              </span>
+            </li>
+        </transition-group>
+
 	  Tasks# {{todos.length}}<BR/>
 	  N={{n}}<BR/>
   </div>
@@ -67,45 +59,45 @@
   
   <div style="clear:left">
   Using a v-text directive title=<span v-text="title"></span>
+  <div>Smooth CSS animation:
+        <input type="button" value="+" @click="barValue += 50"/>
+        <input type="button" value="-" @click="barValue -= 50">
+    </div>
+   <div class="bar" :style="{ width: barValue + 'px' }"></div>
   <div v-text="'Using a v-text directive with inline expression, title='+title"></div>
   <div>Title reversed={{title | reverse}}</div>
-  <div>Title wrapper={{title |  wrap '<<' '>>'}}</div>
-  <div v-my-directive="myarg:title">xx</div>
-  <my-component my-msg="hello">Special content</my-component>  
-  
-  <button v-on="click:clickHandler">Call clickHandler in Scala</button>  
-  <button v-on="click:n++">Increment N</button>
-  
-  <button v-on="click:addTask">Add Task</button>
-  <button v-on="click:change1st">Change 1st</button>
-  <button v-on="click:remove(0,$event)">Remove 1st</button>
-  <button v-on="click:flipAll">Flip All</button><BR/><BR/>
-  Via custom filter <select v-model="selected" options="todos | extract 'content'"></select>
-  Via computed property<select v-model="selected" options="todosFiltered"></select>    
+  <div>Title wrapper={{title | wrap('<<','>>')}}</div>
+  <div v-mydirective="title">xx</div>
+  <my-component my-msg="hello">Special content</my-component>
+  <!---->
+  <button @click="clickHandler">Call clickHandler in Scala</button>
+  <button @click="n++">Increment N</button>
+  <!---->
+  <button @click="addTask">Add Task</button>
+  <button @click="change1st">Change 1st</button>
+  <button @click="remove(0)">Remove 1st</button>
+  <button @click="flipAll">Flip All</button><BR/><BR/>
+  Todos computed: {{ todosComputed }}
   </div>
 </div>
 
 
-<script src='http://cdnjs.cloudflare.com/ajax/libs/vue/0.12.14/vue.min.js'></script> 
+<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js'></script>
 <div id="mydiv"></div>
 
 <script type="text/javascript" src="../scala-js-vue-js-example-fastopt.js"></script>
-<script>
 
 <!--  vue end -->
+<script>
+
      // custom filter to pull out field
-     // should see if I can do this on Scala side TODO
-	Vue.filter('extract', function (value, keyToExtract) {
-	  return value.map(function (item) {
-	    return item[keyToExtract]
-	  })
-	})
+     // Now done in Scala.
+
 		// we get DemoVue back from Scala, then use it
-    var demo=example.Todo().main();
-    demo.title="Todo Todo Todo"
+    var demo=example.Todo.main();
+
     demo.todos.push({done:false,content:"Extra task"})
-    //demo.todos[0]=({done:false,content:"!!!!"})
-    //demo.todos.$set(0, {done:false,content:"!!!!"})
+
 </script>
 
 </body>

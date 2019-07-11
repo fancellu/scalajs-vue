@@ -22,7 +22,7 @@ This should
 download dependencies and prepare the relevant javascript files. It then kicks off a web server to serve the html and JS files.
 
 If you open
-[localhost:12345/target/scala-2.11/classes/index-dev.html](http://localhost:12345/target/scala-2.11/classes/index-dev.html) in your browser, it will show you a sample app, doing various bindings and Scala code. Its not meant to be pretty, simply instructive. Do open the Console to see debug messages.
+[localhost:12345/target/scala-2.12/classes/index-dev.html](http://localhost:12345/target/scala-2.12/classes/index-dev.html) in your browser, it will show you a sample app, doing various bindings and Scala code. Its not meant to be pretty, simply instructive. Do open the Console to see debug messages.
 
 ## Demo
 
@@ -39,10 +39,6 @@ Run `sbt fullOptJS` and open up `index-opt.html` for an optimized version
 of the final application, useful for final publication. You may well need to copy over `index-dev.html` to get your latest changes. Be sure to refer to the correct JS as well, as it will have a different name than the fast compiled version. e.g.
 
 	<script type="text/javascript" src="../scala-js-vue-js-example-opt.js"></script>
-
-## Eclipse integration
-
-If you want to edit in Eclipse (can't compile yet, but still very useful having full IDE with code completion), just run `sbt eclipse` the open the generated .project file inside eclipse. Keep sbt running in order to do the JS Compile. [https://github.com/typesafehub/sbteclipse/wiki](https://github.com/typesafehub/sbteclipse/wiki)
 
 ## Status
 

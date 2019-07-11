@@ -82,18 +82,19 @@
 </div>
 
 
-<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.4/vue.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js'></script>
 <div id="mydiv"></div>
 
 <script type="text/javascript" src="../scala-js-vue-js-example-fastopt.js"></script>
-<script>
 
 <!--  vue end -->
+<script>
+
      // custom filter to pull out field
      // Now done in Scala.
 
 		// we get DemoVue back from Scala, then use it
-    var demo=example.Todo().main();
+    var demo=example.Todo.main();
 
     demo.todos.push({done:false,content:"Extra task"})
 

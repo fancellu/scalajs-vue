@@ -10,13 +10,13 @@ import js.Dynamic.literal
 import com.felstar.scalajs.vue._
 import org.scalajs.dom.raw.HTMLElement
 
-import js.annotation.JSName
+import js.annotation._
 
-@JSExport
+@JSExportTopLevel("example.Todo")
 object Todo extends {
   
     @js.native
-  trait DemoVue extends Vue{
+    trait DemoVue extends Vue{
       var title:String=js.native
       var n:Double=js.native
       var todos:js.Array[DemoVueTodo]=js.native
