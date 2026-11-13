@@ -10,14 +10,19 @@ No npm and no bundler: Vue and Vuetify load from CDNs as globals, Scala.js links
 
 ## Map
 
+Three sbt projects: `core` (the bindings; the only published module), `examples` (demos and pages; `dependsOn(core)`,
+`publish / skip`), and the root (aggregates both, `publish / skip`). Keep exactly one published module: JitPack then
+names it `com.github.fancellu:scalajs-vue:<tag>`; a second published module would switch every artifact to
+`com.github.fancellu.scalajs-vue:<module>:<tag>` and break users' coordinates. Never put demo code or pages in `core`.
+
 | Path | What |
 | --- | --- |
-| `src/main/scala/com/felstar/scalajs/vue/Vue.scala` | Vue 3 facade: `Vue` (global object), `App`, `ComponentPublicInstance`, `DirectiveBinding`, `Ref`, `WatchHandle`, `WritableComputedOptions` |
+| `core/src/main/scala/com/felstar/scalajs/vue/Vue.scala` | Vue 3 facade: `Vue` (global object), `App`, `ComponentPublicInstance`, `DirectiveBinding`, `Ref`, `WatchHandle`, `WritableComputedOptions` |
 | `.../vue/package.scala` | `WatchCallback`, `DirectiveHook` type aliases (a `@js.native` object can't have a Scala companion, so aliases live here) |
-| `src/main/scala/com/felstar/scalajs/vuetify/Vuetify.scala` | Vuetify facade: `createVuetify`, `VuetifyInstance`, `ThemeInstance` |
-| `src/main/scala/example/plain/` | Vue-only examples (`HelloWorld`, exported as `HelloWorld.main`) |
-| `src/main/scala/example/vuetify/` | Vuetify examples, one self-contained file each; `Main.scala` = gallery `ScalaVue.main` + single page `ScalaVue.single` + the `examples` registry |
-| `src/main/resources/` | Pages in `-dev`/`-opt` pairs: `index` (gallery), `demo` (`?demo=<id>`), `hello`; shared CSS `vuetify-examples.css`, `hello.css` |
+| `core/src/main/scala/com/felstar/scalajs/vuetify/Vuetify.scala` | Vuetify facade: `createVuetify`, `VuetifyInstance`, `ThemeInstance` |
+| `examples/src/main/scala/example/plain/` | Vue-only examples (`HelloWorld`, exported as `HelloWorld.main`) |
+| `examples/src/main/scala/example/vuetify/` | Vuetify examples, one self-contained file each; `Main.scala` = gallery `ScalaVue.main` + single page `ScalaVue.single` + the `examples` registry |
+| `examples/src/main/resources/` | Pages in `-dev`/`-opt` pairs: `index` (gallery), `demo` (`?demo=<id>`), `hello`; shared CSS `vuetify-examples.css`, `hello.css` |
 | `build.sbt` | Dev server commands, the `demos` list, and `dist` |
 | `vercel.json`, `scripts/vercel-build.sh` | Vercel deployment of `target/dist` |
 | `project/DevServer.scala` | JDK `HttpServer` static server + `openBrowser` |
@@ -30,12 +35,13 @@ Always run sbt from the repo root.
 
 | Command | Does |
 | --- | --- |
-| `sbt dev` (= `sbt run`) | `fastLinkJS`, serve on `http://localhost:12345`, then `~fastLinkJS` |
+| `sbt dev` (= `sbt run`) | `examples/fastLinkJS`, serve on `http://localhost:12345`, then `~examples/fastLinkJS` |
 | `sbt serve` | Link and serve, back to the shell without watching |
 | `sbt "demo timer"` / `sbt demoTimer` | Like `dev`, and opens the browser on that demo alone. Ids: `gallery hello todos basics temperature timer grid fetch circles` |
 | `sbt fullLinkJS` | Needed before any `-opt` page shows current code |
 | `-Ddemo.browser=false` | Don't open a browser (always use this when automating) |
 | `sbt dist` | `fullLinkJS` + static site in `target/dist` (`index.html` = gallery, `demo.html`, `hello.html`, CSS, `opt/`); what Vercel deploys |
+| `sbt clean publishM2` | What JitPack runs on a release tag; must publish only `scalajs-vue_sjs1_2.13`, a ~32 KB jar of `com/felstar/**` |
 
 Deploying: `vercel.json` (framework none, `outputDirectory: target/dist`, `cleanUrls`) runs
 `scripts/vercel-build.sh`, which downloads Temurin JDK 21 + the sbt launcher (Vercel's Amazon Linux 2023 image has no
@@ -45,7 +51,7 @@ container (add `tar gzip` there; Vercel's image has them). Vercel reads `vercel.
 the `dist` command's page list. Test the output locally by serving `target/dist` at the site root and running
 `node scripts/test-gallery.mjs http://localhost:<port>/`.
 
-Server mounts: `/` -> `src/main/resources` (HTML/CSS edits are live), `/dev/` -> fastLinkJS output, `/opt/` -> fullLinkJS
+Server mounts: `/` -> `examples/src/main/resources` (HTML/CSS edits are live), `/dev/` -> fastLinkJS output, `/opt/` -> fullLinkJS
 output. Linker output lives under `target/out/sjs1/scala-2.13.18/...` (sbt 2 layout); never hardcode it, the build
 reads `scalaJSLinkerOutputDirectory`.
 
@@ -71,7 +77,7 @@ reads `scalaJSLinkerOutputDirectory`.
 ## Adding an example
 
 Vuetify:
-1. New file in `src/main/scala/example/vuetify/` exposing `val component: js.Object` (copy the closest existing one).
+1. New file in `examples/src/main/scala/example/vuetify/` exposing `val component: js.Object` (copy the closest existing one).
 2. `Example(id, title, subtitle, description, icon, file, component)` entry in `Main.scala` (`subtitle` must fit the drawer, ~25 chars).
 3. Add the id to `demos` in `build.sbt` (gives `demo<Id>`).
 4. Section + screenshot in `EXAMPLES.md` (add a `shot(...)` line to `scripts/screenshots.mjs`), and checks in `scripts/test-gallery.mjs`.

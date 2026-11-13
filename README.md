@@ -3,9 +3,17 @@
 
 ## Scala.js bindings for Vue.js 3 and an example application
 
-To use as a library, just pull in from
+To use as a library, pull it in from [JitPack](https://jitpack.io/#fancellu/scalajs-vue) in a Scala.js
+project (Scala 2.13), using a release tag as the version:
 
-[https://jitpack.io/#fancellu/scalajs-vue](https://jitpack.io/#fancellu/scalajs-vue)
+```scala
+resolvers += "jitpack" at "https://jitpack.io"
+libraryDependencies += "com.github.fancellu" % "scalajs-vue" % "v3.5.2"
+```
+
+The published jar holds only the bindings (the `core` project); the examples aren't included. It brings
+in `scalajs-dom`. Load Vue (and Vuetify, if you use that facade) in your page with `<script>` tags, as the
+examples do.
 
 [![CI](https://github.com/fancellu/scalajs-vue/actions/workflows/ci.yml/badge.svg)](https://github.com/fancellu/scalajs-vue/actions/workflows/ci.yml)
 
@@ -56,8 +64,8 @@ loads the Roboto font and the Material Design Icons font that Vuetify uses.
 
 ## Development
 
-If you change the page (inside `/src/main/resources`) or an example (inside `/src/main/scala/example`),
-`sbt dev` picks it up: the HTML is served straight from `src/main/resources`, and the Scala is
+If you change the page (inside `examples/src/main/resources`) or an example (inside `examples/src/main/scala/example`),
+`sbt dev` picks it up: the HTML is served straight from `examples/src/main/resources`, and the Scala is
 relinked on save. You then just have to refresh the page to see the new version. Hopefully having
 example applications will make it clearer how to use Vue from Scala, i.e. monkey see, monkey do.
 
@@ -68,7 +76,7 @@ The server maps
 
 | URL | Serves |
 | --- | --- |
-| `/` | `src/main/resources` |
+| `/` | `examples/src/main/resources` |
 | `/dev/main.js` | `fastLinkJS` output |
 | `/opt/main.js` | `fullLinkJS` output |
 

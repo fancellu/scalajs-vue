@@ -1,17 +1,36 @@
-enablePlugins(ScalaJSPlugin)
+// Two projects:
+//   core      the Scala.js bindings (com.felstar.scalajs.vue / .vuetify); the only published module,
+//             so the JitPack jar holds just the bindings: "com.github.fancellu" % "scalajs-vue" % "<tag>"
+//   examples  the demo apps and their pages; depends on core, never published
+// The root project only aggregates them.
 
-name := "Scala.js+Vue.js example"
+ThisBuild / organization := "com.github.fancellu"
+ThisBuild / version := "3.5.45"
+ThisBuild / scalaVersion := "2.13.18"
+ThisBuild / scalacOptions ++= Seq("-deprecation", "-feature")
 
-version := "3.5.45"
+lazy val root = (project in file("."))
+  .aggregate(core, examples)
+  .settings(
+    name := "scalajs-vue-root",
+    publish / skip := true
+  )
 
-scalaVersion := "2.13.18"
+lazy val core = (project in file("core"))
+  .enablePlugins(ScalaJSPlugin)
+  .settings(
+    name := "scalajs-vue",
+    // sbt 2: %% is platform-aware, so this resolves scalajs-dom_sjs1_2.13
+    libraryDependencies += "org.scala-js" %% "scalajs-dom" % "2.8.1"
+  )
 
-scalacOptions ++= Seq("-deprecation", "-feature")
-
-libraryDependencies ++= Seq(
-  // sbt 2: %% is platform-aware, so this resolves scalajs-dom_sjs1_2.13
-  "org.scala-js" %% "scalajs-dom" % "2.8.1"
-)
+lazy val examples = (project in file("examples"))
+  .enablePlugins(ScalaJSPlugin)
+  .dependsOn(core)
+  .settings(
+    name := "scalajs-vue-examples",
+    publish / skip := true
+  )
 
 // ---------------------------------------------------------------------------
 // Demo dev server
@@ -21,7 +40,7 @@ libraryDependencies ++= Seq(
 //   sbt "demo timer"        like dev, but opens your browser on just that demo
 //   sbt demoTimer           shortcut for the above; one per demo, listed in `demos` below
 //
-// Serves src/main/resources at /, the fastLinkJS output at /dev/ and the fullLinkJS
+// Serves examples/src/main/resources at /, the fastLinkJS output at /dev/ and the fullLinkJS
 // output at /opt/. These are commands rather than tasks so sbt 2's task cache can't skip them.
 // Add -Ddemo.browser=false to stop `demo` opening a browser.
 // ---------------------------------------------------------------------------
@@ -41,14 +60,14 @@ val demos: Seq[(String, String)] =
 
 def startServer(state: State): State = {
   val extracted = Project.extract(state)
-  val (linked, _) = extracted.runTask(Compile / fastLinkJS, state)
+  val (linked, _) = extracted.runTask(examples / Compile / fastLinkJS, state)
   val port = extracted.get(devServerPort)
   DevServer.start(
     port,
     Seq(
-      "/dev/" -> extracted.get(Compile / fastLinkJS / scalaJSLinkerOutputDirectory),
-      "/opt/" -> extracted.get(Compile / fullLinkJS / scalaJSLinkerOutputDirectory),
-      "/" -> extracted.get(Compile / resourceDirectory)
+      "/dev/" -> extracted.get(examples / Compile / fastLinkJS / scalaJSLinkerOutputDirectory),
+      "/opt/" -> extracted.get(examples / Compile / fullLinkJS / scalaJSLinkerOutputDirectory),
+      "/" -> extracted.get(examples / Compile / resourceDirectory)
     )
   )
   val log = linked.log
@@ -59,7 +78,7 @@ def startServer(state: State): State = {
 
 commands += Command.command("serve")(startServer)
 
-addCommandAlias("dev", "; serve ; ~fastLinkJS")
+addCommandAlias("dev", "; serve ; ~examples/fastLinkJS")
 
 // A browser app can't run under Scala.js's Node-based `run`, so `run` starts the dev server.
 addCommandAlias("run", "dev")
@@ -74,7 +93,7 @@ commands += Command("demo", ("demo <name>", s"Serve one demo and open it: ${demo
       val url = s"http://localhost:${Project.extract(state).get(devServerPort)}/$page"
       served.log.info(s"Demo '$id': $url")
       DevServer.openBrowser(url, served.log.info(_), served.log.warn(_))
-      "~fastLinkJS" :: served
+      "~examples/fastLinkJS" :: served
     case None =>
       state.log.error(s"Unknown demo '$id'. Try one of: ${demos.map(_._1).mkString(", ")}")
       state.fail
@@ -98,13 +117,13 @@ Global / onUnload := (Global / onUnload).value.andThen { s => DevServer.stop(); 
 
 commands += Command.command("dist") { state =>
   val extracted = Project.extract(state)
-  val (linked, _) = extracted.runTask(Compile / fullLinkJS, state)
-  val resources = extracted.get(Compile / resourceDirectory)
-  val out = extracted.get(baseDirectory) / "target" / "dist"
+  val (linked, _) = extracted.runTask(examples / Compile / fullLinkJS, state)
+  val resources = extracted.get(examples / Compile / resourceDirectory)
+  val out = extracted.get(LocalRootProject / baseDirectory) / "target" / "dist"
   IO.delete(out)
   Seq("index", "demo", "hello").foreach(page => IO.copyFile(resources / s"$page-opt.html", out / s"$page.html"))
   resources.listFiles().filter(_.getName.endsWith(".css")).foreach(css => IO.copyFile(css, out / css.getName))
-  IO.copyDirectory(extracted.get(Compile / fullLinkJS / scalaJSLinkerOutputDirectory), out / "opt")
+  IO.copyDirectory(extracted.get(examples / Compile / fullLinkJS / scalaJSLinkerOutputDirectory), out / "opt")
   linked.log.info(s"Static site in $out (index.html = gallery)")
   linked
 }

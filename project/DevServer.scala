@@ -7,7 +7,7 @@ import com.sun.net.httpserver.{HttpExchange, HttpHandler, HttpServer}
 
 /** Tiny static file server for the demo pages, built on the JDK's HttpServer (no dependencies).
   * Files are read on every request with caching disabled, so a page reload always picks up the
-  * latest linked JS and the HTML straight from src/main/resources.
+  * latest linked JS and the HTML straight from examples/src/main/resources.
   */
 object DevServer {
   private var server: Option[HttpServer] = None

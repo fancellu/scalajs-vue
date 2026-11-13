@@ -25,7 +25,7 @@ final case class Example(
 @JSExportTopLevel("ScalaVue")
 object Main {
 
-  private val sourceBase = "https://github.com/fancellu/scalajs-vue/blob/master/src/main/scala/example/vuetify/"
+  private val sourceBase = "https://github.com/fancellu/scalajs-vue/blob/master/examples/src/main/scala/example/vuetify/"
 
   val examples: Seq[Example] = Seq(
     Example("todos", "Todos", "Lists, filters, transitions",

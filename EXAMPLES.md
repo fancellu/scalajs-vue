@@ -23,7 +23,7 @@ with just that example, and relinks whenever you save. Add `-Ddemo.browser=false
 
 `sbt dev` (or `sbt demoGallery`) serves all the Vuetify examples in one app with a navigation drawer,
 a light/dark toggle and a link per example (`#/timer` and so on). It's built in
-[vuetify/Main.scala](src/main/scala/example/vuetify/Main.scala), exported to JavaScript as `ScalaVue.main`.
+[vuetify/Main.scala](examples/src/main/scala/example/vuetify/Main.scala), exported to JavaScript as `ScalaVue.main`.
 
 ![The gallery, light theme](docs/screenshots/gallery.png)
 
@@ -31,12 +31,12 @@ a light/dark toggle and a link per example (`#/timer` and so on). It's built in
 
 ## Plain Vue
 
-These live in [`src/main/scala/example/plain`](src/main/scala/example/plain). Their pages load Vue and
+These live in [`examples/src/main/scala/example/plain`](examples/src/main/scala/example/plain). Their pages load Vue and
 nothing else, so they're the place to start if you don't want Vuetify.
 
 ### Hello World
 
-`sbt demoHello` · [HelloWorld.scala](src/main/scala/example/plain/HelloWorld.scala) · page `hello-dev.html`
+`sbt demoHello` · [HelloWorld.scala](examples/src/main/scala/example/plain/HelloWorld.scala) · page `hello-dev.html`
 
 - `setup()` returns two `Vue.ref`s, a `Vue.computed` that reverses the message in Scala, and a reset function.
 - The template binds them with `v-model`, `{{ }}` and `@click`.
@@ -46,13 +46,13 @@ nothing else, so they're the place to start if you don't want Vuetify.
 
 ## Vuetify
 
-These live in [`src/main/scala/example/vuetify`](src/main/scala/example/vuetify). Their templates use
+These live in [`examples/src/main/scala/example/vuetify`](examples/src/main/scala/example/vuetify). Their templates use
 [Vuetify 4](https://vuetifyjs.com/) components, which the pages load from a CDN along with Vue.
 Run on their own, they use `demo-dev.html?demo=<name>` (`ScalaVue.single`).
 
 ### Todos
 
-`sbt demoTodos` · [Todos.scala](src/main/scala/example/vuetify/Todos.scala)
+`sbt demoTodos` · [Todos.scala](examples/src/main/scala/example/vuetify/Todos.scala)
 
 - Options API: `data`, `computed` (`remaining`, the filtered `visible` list) and `methods`, each a Scala function taking the component instance.
 - A deep `watch` on `todos` saves the list to localStorage, so it survives a reload.
@@ -62,7 +62,7 @@ Run on their own, they use `demo-dev.html?demo=<name>` (`ScalaVue.single`).
 
 ### Basics
 
-`sbt demoBasics` · [Basics.scala](src/main/scala/example/vuetify/Basics.scala)
+`sbt demoBasics` · [Basics.scala](examples/src/main/scala/example/vuetify/Basics.scala)
 
 - `v-model`, `v-text`, and methods standing in for Vue 2's filters (`reverse(title)`, `wrap(title, …)`).
 - A custom directive (`v-shout`) and a child component with a prop and a slot, both registered locally from Scala.
@@ -73,7 +73,7 @@ Run on their own, they use `demo-dev.html?demo=<name>` (`ScalaVue.single`).
 
 ### Temperature
 
-`sbt demoTemperature` · [Temperature.scala](src/main/scala/example/vuetify/Temperature.scala)
+`sbt demoTemperature` · [Temperature.scala](examples/src/main/scala/example/vuetify/Temperature.scala)
 
 - Composition API: `setup()` builds the state with `Vue.ref` and `Vue.writableComputed`.
 - Both number fields are writable computed values over one Celsius ref, so editing either updates the other.
@@ -83,7 +83,7 @@ Run on their own, they use `demo-dev.html?demo=<name>` (`ScalaVue.single`).
 
 ### Timer
 
-`sbt demoTimer` · [Timer.scala](src/main/scala/example/vuetify/Timer.scala)
+`sbt demoTimer` · [Timer.scala](examples/src/main/scala/example/vuetify/Timer.scala)
 
 - `Vue.onMounted` starts a `js.timers.setInterval`; `Vue.onUnmounted` clears it, so leaving the page stops it.
 - The interval handle is a plain Scala `var` captured by those closures.
@@ -93,7 +93,7 @@ Run on their own, they use `demo-dev.html?demo=<name>` (`ScalaVue.single`).
 
 ### Data grid
 
-`sbt demoGrid` · [LanguageGrid.scala](src/main/scala/example/vuetify/LanguageGrid.scala)
+`sbt demoGrid` · [LanguageGrid.scala](examples/src/main/scala/example/vuetify/LanguageGrid.scala)
 
 - The rows start as Scala case classes and are converted to plain JS objects for Vuetify's `v-data-table`.
 - The table does searching, sorting and paging; a computed value in Scala adds the Static / Dynamic filter.
@@ -103,7 +103,7 @@ Run on their own, they use `demo-dev.html?demo=<name>` (`ScalaVue.single`).
 
 ### Fetching data
 
-`sbt demoFetch` · [FetchCommits.scala](src/main/scala/example/vuetify/FetchCommits.scala)
+`sbt demoFetch` · [FetchCommits.scala](examples/src/main/scala/example/vuetify/FetchCommits.scala)
 
 - Loads the latest commits to vuejs/core from the GitHub API with `dom.fetch`, chained as Scala `Future`s.
 - A `watch` on the branch (with `immediate`) reloads; only the newest request may update the page.
@@ -114,7 +114,7 @@ Run on their own, they use `demo-dev.html?demo=<name>` (`ScalaVue.single`).
 
 ### Circle drawer
 
-`sbt demoCircles` · [CircleDrawer.scala](src/main/scala/example/vuetify/CircleDrawer.scala)
+`sbt demoCircles` · [CircleDrawer.scala](examples/src/main/scala/example/vuetify/CircleDrawer.scala)
 
 - Click to add a circle, click one to select it, right-click (or Adjust diameter) to resize it in a dialog.
 - Undo and redo work over an immutable Scala history (`List`s of `Vector[Circle]`), held outside Vue's
@@ -125,8 +125,8 @@ Run on their own, they use `demo-dev.html?demo=<name>` (`ScalaVue.single`).
 
 ## Adding an example
 
-- **Vuetify:** write a component in a new file under `src/main/scala/example/vuetify` (copy one of the
+- **Vuetify:** write a component in a new file under `examples/src/main/scala/example/vuetify` (copy one of the
   existing ones), add an `Example(...)` entry for it in `Main.scala`, and add its id to `demos` in
   `build.sbt` to get a `demo<Name>` shortcut.
-- **Plain:** write an object under `src/main/scala/example/plain` with an exported `main(selector)`, give it
+- **Plain:** write an object under `examples/src/main/scala/example/plain` with an exported `main(selector)`, give it
   a page like `hello-dev.html` (and its `-opt` twin), and add it to `demos` in `build.sbt`.
