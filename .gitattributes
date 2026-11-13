@@ -15,3 +15,6 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Shell scripts run on Linux build machines (Vercel): always LF
+*.sh text eol=lf

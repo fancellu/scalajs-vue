@@ -85,3 +85,26 @@ commands += Command("demo", ("demo <name>", s"Serve one demo and open it: ${demo
 demos.map { case (id, _) => addCommandAlias(s"demo${id.capitalize}", s"demo $id") }.flatten
 
 Global / onUnload := (Global / onUnload).value.andThen { s => DevServer.stop(); s }
+
+// ---------------------------------------------------------------------------
+// Static site for hosting (Vercel: see vercel.json and scripts/vercel-build.sh)
+//
+//   sbt dist   fullLinkJS, then assemble target/dist:
+//                index.html  the Vuetify gallery (example.vuetify.Main, ScalaVue.main)
+//                demo.html   one Vuetify example, ?demo=<id>
+//                hello.html  the plain Vue Hello World
+//                *.css, opt/main.js
+// ---------------------------------------------------------------------------
+
+commands += Command.command("dist") { state =>
+  val extracted = Project.extract(state)
+  val (linked, _) = extracted.runTask(Compile / fullLinkJS, state)
+  val resources = extracted.get(Compile / resourceDirectory)
+  val out = extracted.get(baseDirectory) / "target" / "dist"
+  IO.delete(out)
+  Seq("index", "demo", "hello").foreach(page => IO.copyFile(resources / s"$page-opt.html", out / s"$page.html"))
+  resources.listFiles().filter(_.getName.endsWith(".css")).foreach(css => IO.copyFile(css, out / css.getName))
+  IO.copyDirectory(extracted.get(Compile / fullLinkJS / scalaJSLinkerOutputDirectory), out / "opt")
+  linked.log.info(s"Static site in $out (index.html = gallery)")
+  linked
+}

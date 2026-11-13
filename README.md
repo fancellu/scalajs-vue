@@ -61,7 +61,8 @@ If you change the page (inside `/src/main/resources`) or an example (inside `/sr
 relinked on save. You then just have to refresh the page to see the new version. Hopefully having
 example applications will make it clearer how to use Vue from Scala, i.e. monkey see, monkey do.
 
-To add an example, see [Adding an example](EXAMPLES.md#adding-an-example).
+To add an example, see [Adding an example](EXAMPLES.md#adding-an-example). Working with an AI coding
+agent? See [SKILLS.md](SKILLS.md).
 
 The server maps
 
@@ -96,6 +97,18 @@ for an optimized version of the final application, using the production builds o
 Every page comes in a `-dev` and an `-opt` pair (`index`, `demo`, `hello`); the `-opt` one differs
 only in its script tags, so copy over any changes you make to the dev page. Shared styles live in
 `vuetify-examples.css` and `hello.css`.
+
+## Deploying (Vercel)
+
+`sbt dist` runs `fullLinkJS` and assembles a static site in `target/dist`: `index.html` is the Vuetify
+gallery (`example.vuetify.Main`), plus `demo.html?demo=<id>`, `hello.html`, the CSS and `opt/main.js`.
+Any static host can serve that folder.
+
+[`vercel.json`](vercel.json) builds it on Vercel: import the repository as a project and deploy, no
+settings needed. Vercel's build image has no Java, so [`scripts/vercel-build.sh`](scripts/vercel-build.sh)
+downloads a Temurin JDK 21 and the sbt launcher first, then runs `sbt --server -batch dist` (about 70 s
+from cold). With `cleanUrls` the pages are served as `/`, `/demo?demo=timer` and `/hello`. The script
+also works on any Linux machine or CI runner with `curl` and `tar`.
 
 ## Moving from the Vue 2 bindings
 
