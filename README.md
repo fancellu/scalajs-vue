@@ -50,9 +50,9 @@ Vue (the `vue.global.js` build, which includes the template compiler) and Vuetif
 loaded from CDNs as the globals `Vue` and `Vuetify`, so there is no npm or bundler step. The page also
 loads the Roboto font and the Material Design Icons font that Vuetify uses.
 
-## Demo
+## Live Demo
 
-[live demo](http://dinofancellu.com/demo/scalajsVue/)
+[Vercel live demo](https://scalajs-vue.vercel.app/)
 
 ## Development
 
