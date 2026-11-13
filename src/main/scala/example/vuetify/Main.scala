@@ -1,11 +1,12 @@
-package example
+package example.vuetify
 
 import scala.scalajs.js
+import scala.scalajs.js.URIUtils
 import scala.scalajs.js.annotation._
 import scala.scalajs.js.Dynamic.literal
 import org.scalajs.dom
 import com.felstar.scalajs.vue._
-import com.felstar.scalajs.vuetify.Vuetify
+import com.felstar.scalajs.vuetify.{Vuetify, VuetifyInstance}
 
 final case class Example(
   id: String,
@@ -17,11 +18,14 @@ final case class Example(
   component: js.Object
 )
 
-/** Entry point: builds the Vuetify app shell (app bar, navigation drawer, hash routing) around the examples. */
+/** Entry points for the Vuetify examples:
+  *  - `ScalaVue.main("#app")`: the gallery, an app shell (app bar, navigation drawer, hash routing) around all of them
+  *  - `ScalaVue.single("#app")`: one example on its own page, picked by the `?demo=<id>` query parameter
+  */
 @JSExportTopLevel("ScalaVue")
 object Main {
 
-  private val sourceBase = "https://github.com/fancellu/scalajs-vue/blob/master/src/main/scala/example/"
+  private val sourceBase = "https://github.com/fancellu/scalajs-vue/blob/master/src/main/scala/example/vuetify/"
 
   val examples: Seq[Example] = Seq(
     Example("todos", "Todos", "Lists, filters, transitions",
@@ -53,12 +57,47 @@ object Main {
     var drawer: js.Any = js.native
   }
 
-  private def routeFromHash(): String = {
-    val id = dom.window.location.hash.stripPrefix("#").stripPrefix("/")
-    if (examples.exists(_.id == id)) id else examples.head.id
-  }
+  private def known(id: String): String = if (examples.exists(_.id == id)) id else examples.head.id
 
-  private val template = """
+  private def routeFromHash(): String = known(dom.window.location.hash.stripPrefix("#").stripPrefix("/"))
+
+  /** `?demo=timer` -> "timer" */
+  private def demoFromQuery(): String =
+    known(
+      dom.window.location.search.stripPrefix("?").split("&").toSeq
+        .map(_.split("=", 2))
+        .collectFirst { case Array("demo", value) => URIUtils.decodeURIComponent(value) }
+        .getOrElse("")
+    )
+
+  /** Example title, description and source link; shared by the gallery and the single-example page. */
+  private val header = """
+    <header class="mb-6">
+      <div class="d-flex align-center flex-wrap ga-4">
+        <v-avatar color="primary" variant="tonal" rounded="lg" size="48">
+          <v-icon :icon="example.icon"></v-icon>
+        </v-avatar>
+        <h1 class="text-headline-medium ma-0 flex-grow-1">{{ example.title }}</h1>
+        <v-btn variant="tonal" prepend-icon="mdi-code-tags" :href="example.source" target="_blank" rel="noopener">
+          {{ example.file }}
+        </v-btn>
+      </div>
+      <p class="text-body-large text-medium-emphasis ma-0 mt-3">{{ example.description }}</p>
+    </header>
+  """
+
+  private val singleTemplate = """
+    <v-app>
+      <v-main>
+        <v-container class="page py-8">
+          HEADER
+          <component :is="example.component"></component>
+        </v-container>
+      </v-main>
+    </v-app>
+  """.replace("HEADER", header)
+
+  private val galleryTemplate = """
     <v-app>
       <v-app-bar flat border="b">
         <v-app-bar-nav-icon aria-label="Toggle navigation" @click="drawer = !drawer"></v-app-bar-nav-icon>
@@ -98,28 +137,15 @@ object Main {
 
       <v-main>
         <v-container class="page py-8">
-          <header class="mb-6">
-            <div class="d-flex align-center flex-wrap ga-4">
-              <v-avatar color="primary" variant="tonal" rounded="lg" size="48">
-                <v-icon :icon="example.icon"></v-icon>
-              </v-avatar>
-              <h1 class="text-headline-medium ma-0 flex-grow-1">{{ example.title }}</h1>
-              <v-btn variant="tonal" prepend-icon="mdi-code-tags" :href="example.source" target="_blank" rel="noopener">
-                {{ example.file }}
-              </v-btn>
-            </div>
-            <p class="text-body-large text-medium-emphasis ma-0 mt-3">{{ example.description }}</p>
-          </header>
+          HEADER
           <component :is="example.component" :key="example.id"></component>
         </v-container>
       </v-main>
     </v-app>
-  """
+  """.replace("HEADER", header)
 
-  /** Called from the page: `ScalaVue.main("#app")`. Returns the root instance for poking at from JS. */
-  @JSExport
-  def main(selector: String): ComponentPublicInstance = {
-    val vuetify = Vuetify.createVuetify(
+  private def createVuetify(): VuetifyInstance =
+    Vuetify.createVuetify(
       literal(
         theme = literal(
           defaultTheme = "system",
@@ -132,26 +158,46 @@ object Main {
       )
     )
 
-    val examplesJs = js.Array(examples.map { e =>
-      literal(
-        id = e.id,
-        title = e.title,
-        subtitle = e.subtitle,
-        description = e.description,
-        icon = e.icon,
-        file = e.file,
-        source = sourceBase + e.file,
-        // component definitions must not be made reactive
-        component = Vue.markRaw(e.component)
-      ): js.Object
-    }: _*)
+  private lazy val examplesJs: js.Array[js.Object] = js.Array(examples.map { e =>
+    literal(
+      id = e.id,
+      title = e.title,
+      subtitle = e.subtitle,
+      description = e.description,
+      icon = e.icon,
+      file = e.file,
+      source = sourceBase + e.file,
+      // component definitions must not be made reactive
+      component = Vue.markRaw(e.component)
+    ): js.Object
+  }: _*)
 
-    def exampleById(id: String): js.Dynamic =
-      examplesJs.find(_.asInstanceOf[js.Dynamic].id.asInstanceOf[String] == id).get.asInstanceOf[js.Dynamic]
+  private def exampleById(id: String): js.Dynamic =
+    examplesJs.find(_.asInstanceOf[js.Dynamic].id.asInstanceOf[String] == id).get.asInstanceOf[js.Dynamic]
+
+  /** One example on its own page (`demo-dev.html?demo=timer`); used by the per-demo sbt commands. */
+  @JSExport
+  def single(selector: String): ComponentPublicInstance = {
+    val example = exampleById(demoFromQuery())
+    dom.document.title = s"${example.title} · Scala.js + Vue"
+    val app = Vue.createApp(
+      literal(
+        template = singleTemplate,
+        data = (() => literal(example = example)): js.Function0[js.Object]
+      )
+    )
+    app.use(createVuetify())
+    app.mount(selector)
+  }
+
+  /** The gallery: `ScalaVue.main("#app")`. Returns the root instance for poking at from JS. */
+  @JSExport
+  def main(selector: String): ComponentPublicInstance = {
+    val vuetify = createVuetify()
 
     val app = Vue.createApp(
       literal(
-        template = template,
+        template = galleryTemplate,
         data = (() =>
           literal(
             drawer = null, // null lets Vuetify decide: open on desktop, closed on phones

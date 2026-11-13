@@ -1,0 +1,17 @@
+/* Shared by the Vuetify pages. Unlayered, so these sit on top of Vuetify's cascade layers. */
+.page { max-width: 1040px; }
+.tabular { font-variant-numeric: tabular-nums; }
+.bar-track { height: 16px; background: rgba(var(--v-theme-on-surface), .12); }
+.bar { transition: width .5s ease, background-color .5s ease; }
+.search-field { min-width: 220px; max-width: 360px; }
+.code-block {
+  margin: 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: rgb(var(--v-theme-surface-light));
+  font-size: .875rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+.drawing { cursor: crosshair; touch-action: manipulation; aspect-ratio: 600 / 360; }
+.drawing .circle { cursor: pointer; transition: fill-opacity .15s ease; }

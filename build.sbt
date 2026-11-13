@@ -18,16 +18,28 @@ libraryDependencies ++= Seq(
 //
 //   sbt dev   (or sbt run)  link, serve on http://localhost:12345, relink on every change
 //   sbt serve               link and serve, then return to the sbt shell
+//   sbt "demo timer"        like dev, but opens your browser on just that demo
+//   sbt demoTimer           shortcut for the above; one per demo, listed in `demos` below
 //
 // Serves src/main/resources at /, the fastLinkJS output at /dev/ and the fullLinkJS
-// output at /opt/. It is a command rather than a task so sbt 2's task cache can't skip it.
+// output at /opt/. These are commands rather than tasks so sbt 2's task cache can't skip them.
+// Add -Ddemo.browser=false to stop `demo` opening a browser.
 // ---------------------------------------------------------------------------
 
 val devServerPort = settingKey[Int]("Port for the demo dev server")
 
 devServerPort := 12345
 
-commands += Command.command("serve") { state =>
+// demo id -> page, relative to the server root. Vuetify ids must match example.vuetify.Main.examples.
+val demos: Seq[(String, String)] =
+  Seq(
+    "gallery" -> "index-dev.html",
+    "hello" -> "hello-dev.html" // example.plain.HelloWorld: Vue only, no Vuetify
+  ) ++ Seq("todos", "basics", "temperature", "timer", "grid", "fetch", "circles").map { id =>
+    id -> s"demo-dev.html?demo=$id"
+  }
+
+def startServer(state: State): State = {
   val extracted = Project.extract(state)
   val (linked, _) = extracted.runTask(Compile / fastLinkJS, state)
   val port = extracted.get(devServerPort)
@@ -45,9 +57,31 @@ commands += Command.command("serve") { state =>
   linked
 }
 
+commands += Command.command("serve")(startServer)
+
 addCommandAlias("dev", "; serve ; ~fastLinkJS")
 
 // A browser app can't run under Scala.js's Node-based `run`, so `run` starts the dev server.
 addCommandAlias("run", "dev")
+
+commands += Command("demo", ("demo <name>", s"Serve one demo and open it: ${demos.map(_._1).mkString(", ")}"), "") { _ =>
+  import sbt.internal.util.complete.DefaultParsers._
+  Space ~> NotSpace.examples(demos.map(_._1)*)
+} { (state, id) =>
+  demos.collectFirst { case (`id`, page) => page } match {
+    case Some(page) =>
+      val served = startServer(state)
+      val url = s"http://localhost:${Project.extract(state).get(devServerPort)}/$page"
+      served.log.info(s"Demo '$id': $url")
+      DevServer.openBrowser(url, served.log.info(_), served.log.warn(_))
+      "~fastLinkJS" :: served
+    case None =>
+      state.log.error(s"Unknown demo '$id'. Try one of: ${demos.map(_._1).mkString(", ")}")
+      state.fail
+  }
+}
+
+// One shortcut per demo: demoGallery, demoHello, demoTodos, demoTimer, ...
+demos.map { case (id, _) => addCommandAlias(s"demo${id.capitalize}", s"demo $id") }.flatten
 
 Global / onUnload := (Global / onUnload).value.andThen { s => DevServer.stop(); s }

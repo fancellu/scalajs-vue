@@ -1,4 +1,4 @@
-package example
+package example.vuetify
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.literal
@@ -72,7 +72,7 @@ object Basics {
               <v-btn icon="mdi-plus" variant="tonal" size="small" aria-label="Grow" @click="barValue = Math.min(100, barValue + 20)"></v-btn>
               <span class="text-body-large ml-2 tabular">{{ barValue }}%</span>
             </div>
-            <div class="rounded-pill bg-surface-variant overflow-hidden" style="height: 16px">
+            <div class="rounded-pill overflow-hidden bar-track">
               <div class="h-100 rounded-pill bar" :class="barValue >= 80 ? 'bg-secondary' : 'bg-primary'" :style="{ width: barValue + '%' }"></div>
             </div>
           </v-card-text>

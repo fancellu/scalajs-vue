@@ -1,4 +1,4 @@
-package example
+package example.vuetify
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.literal

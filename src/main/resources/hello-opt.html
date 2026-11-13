@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Hello World · Scala.js + Vue</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23C2261D'/%3E%3Cpath d='M9 9l7 14 7-14' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"/>
+  <link rel="stylesheet" href="hello.css"/>
+</head>
+<body>
+
+<div id="app"></div>
+
+<!-- Vue only: no Vuetify, no fonts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.45/vue.global.prod.js"></script>
+<script src="opt/main.js"></script>
+<script>
+  // HelloWorld is exported from Scala (example.plain.HelloWorld)
+  var app = HelloWorld.main("#app");
+</script>
+
+</body>
+</html>

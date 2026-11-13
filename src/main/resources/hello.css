@@ -1,0 +1,29 @@
+/* Plain CSS for the Vue-only Hello World page. */
+:root {
+  color-scheme: light dark;
+  --accent: #c2261d;
+  --on-accent: #ffffff;
+  --muted: #6b6f76;
+  --field: #ffffff;
+  --border: #c9ccd1;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --accent: #ff7a6e; --on-accent: #2a0b08; --muted: #a2a6ad; --field: #1d1f22; --border: #44474c; }
+}
+body { margin: 0; padding: 48px 16px; }
+.hello { max-width: 560px; margin: 0 auto; }
+.hello h1 { font-size: 2.25rem; margin: 0 0 24px; overflow-wrap: anywhere; }
+.hello label { display: block; font-size: .875rem; color: var(--muted); margin-bottom: 6px; }
+.hello input {
+  width: 100%; box-sizing: border-box; padding: 10px 12px; font: inherit;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--field); color: inherit;
+}
+.hello input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.hello button {
+  font: inherit; padding: 8px 16px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent);
+}
+.hello button.secondary { background: transparent; color: inherit; border-color: var(--border); }
+.hello button + button { margin-left: 8px; }
+.hello .note { color: var(--muted); font-size: .875rem; margin-top: 32px; }

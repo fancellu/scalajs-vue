@@ -1,4 +1,4 @@
-package example
+package example.vuetify
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.scalajs.concurrent.JSExecutionContext

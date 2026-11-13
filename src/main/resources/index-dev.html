@@ -10,24 +10,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@4.3.1/dist/vuetify.min.css"/>
-  <style>
-    /* Unlayered, so these sit on top of Vuetify's cascade layers. */
-    .page { max-width: 1040px; }
-    .tabular { font-variant-numeric: tabular-nums; }
-    .bar { transition: width .5s ease, background-color .5s ease; }
-    .search-field { min-width: 220px; max-width: 360px; }
-    .code-block {
-      margin: 0;
-      padding: 16px;
-      border-radius: 8px;
-      background: rgb(var(--v-theme-surface-light));
-      font-size: .875rem;
-      white-space: pre-wrap;
-      overflow-x: auto;
-    }
-    .drawing { cursor: crosshair; touch-action: manipulation; aspect-ratio: 600 / 360; }
-    .drawing .circle { cursor: pointer; transition: fill-opacity .15s ease; }
-  </style>
+  <link rel="stylesheet" href="vuetify-examples.css"/>
 </head>
 <body>
 
@@ -37,7 +20,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vuetify@4.3.1/dist/vuetify.js"></script>
 <script src="dev/main.js"></script>
 <script>
-  // ScalaVue is exported from Scala (example.Main); it returns the root component instance
+  // ScalaVue is exported from Scala (example.vuetify.Main); main() mounts the gallery of all examples
   var app = ScalaVue.main("#app");
 </script>
 

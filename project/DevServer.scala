@@ -33,6 +33,19 @@ object DevServer {
     server = None
   }
 
+  /** Opens `url` in the default browser, unless -Ddemo.browser=false. Never fails the build. */
+  def openBrowser(url: String, info: String => Unit, warn: String => Unit): Unit =
+    if (sys.props.get("demo.browser").contains("false")) info("Not opening a browser (demo.browser=false)")
+    else {
+      val os = sys.props.getOrElse("os.name", "").toLowerCase
+      val command =
+        if (os.contains("win")) Seq("rundll32", "url.dll,FileProtocolHandler", url)
+        else if (os.contains("mac")) Seq("open", url)
+        else Seq("xdg-open", url)
+      try { new ProcessBuilder(java.util.Arrays.asList(command.toArray*)).start(); () }
+      catch { case e: Exception => warn(s"Couldn't open a browser (${e.getMessage}); open $url yourself") }
+    }
+
   private val contentTypes = Map(
     "html" -> "text/html; charset=utf-8",
     "js" -> "text/javascript; charset=utf-8",
