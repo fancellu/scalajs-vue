@@ -51,6 +51,10 @@ reads `scalaJSLinkerOutputDirectory`.
 
 ## sbt 2 and Windows gotchas
 
+- Keep `.sbtopts` (`--server`) in the repo root. Recent sbt launchers (1.12+, as on CI runners) start sbt 2 as a thin
+  client: `sbt fastLinkJS fullLinkJS` is then sent as one unparseable command line ("Expected whitespace character"),
+  `-D` flags don't reach the build, and Ctrl+C on `sbt dev` leaves a background server still serving port 12345.
+  `--server` restores the classic single-JVM run. Old launchers (1.8.x) honour the file too.
 - `%%` is platform-aware in sbt 2; `%%%` no longer exists.
 - The meta-build (`build.sbt`, `project/*.scala`) is Scala 3: write `xs*`, not `xs: _*`, or you get warnings.
 - Dev server commands are `Command`s, not tasks, so sbt 2's task cache can't skip them.

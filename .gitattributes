@@ -18,3 +18,4 @@
 
 # Shell scripts run on Linux build machines (Vercel): always LF
 *.sh text eol=lf
+.sbtopts text eol=lf
