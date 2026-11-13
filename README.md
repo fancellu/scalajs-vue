@@ -15,6 +15,9 @@ The published jar holds only the bindings (the `core` project); the examples are
 in `scalajs-dom`. Load Vue (and Vuetify, if you use that facade) in your page with `<script>` tags, as the
 examples do.
 
+**Quickest start:** copy the [`starter/`](starter) folder, a standalone sbt project that pulls the library
+from JitPack and has one Vuetify component ready to edit.
+
 [![CI](https://github.com/fancellu/scalajs-vue/actions/workflows/ci.yml/badge.svg)](https://github.com/fancellu/scalajs-vue/actions/workflows/ci.yml)
 
 Example app showing the use of [Scala.js](https://www.scala-js.org/) with [Vue.js](https://vuejs.org/),
@@ -113,7 +116,7 @@ gallery (`example.vuetify.Main`), plus `demo.html?demo=<id>`, `hello.html`, the 
 Any static host can serve that folder.
 
 [`vercel.json`](vercel.json) builds it on Vercel: import the repository as a project and deploy, no
-settings needed. Vercel's build image has no Java, so it runs [`scripts/sbt.sh`](scripts/sbt.sh)` dist`, which
+settings needed. Vercel's build image has no Java, so it runs `bash scripts/sbt.sh dist` ([script](scripts/sbt.sh)), which
 downloads a Temurin JDK 21 and the sbt launcher first, then runs `sbt --server -batch dist` (about 70 s
 from cold). JitPack builds releases with the same script (`sbt.sh clean publishM2`, see `jitpack.yml`), as its own
 sbt launcher varies between build hosts. With `cleanUrls` the pages are served as `/`, `/demo?demo=timer` and `/hello`. The script

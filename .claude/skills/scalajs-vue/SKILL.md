@@ -59,10 +59,12 @@ reads `scalaJSLinkerOutputDirectory`.
 
 ## sbt 2 and Windows gotchas
 
-- Keep `.sbtopts` (`--server`) in the repo root. Recent sbt launchers (1.12+, as on CI runners) start sbt 2 as a thin
-  client: `sbt fastLinkJS fullLinkJS` is then sent as one unparseable command line ("Expected whitespace character"),
-  `-D` flags don't reach the build, and Ctrl+C on `sbt dev` leaves a background server still serving port 12345.
-  `--server` restores the classic single-JVM run. Old launchers (1.8.x) honour the file too.
+- Thin client: recent bash `sbt` launchers (as on CI runners, macOS, Linux) start sbt 2 as a thin client, which sends
+  `sbt fastLinkJS fullLinkJS` as one unparseable command line ("Expected whitespace character") and leaves a
+  background sbt server running (`sbt shutdown` stops it). Only the `--server` argument turns it off, so scripts and
+  CI pass `sbt --server ...` explicitly. Do NOT put `--server` in `.sbtopts`: Windows `sbt.bat` passes every
+  `.sbtopts` line to Java ("Unrecognized option: --server", nothing runs). `sbt.bat` never uses the thin client
+  unless asked. Test sbt changes through `cmd //c "sbt ..."` as well as bash.
 - `%%` is platform-aware in sbt 2; `%%%` no longer exists.
 - The meta-build (`build.sbt`, `project/*.scala`) is Scala 3: write `xs*`, not `xs: _*`, or you get warnings.
 - Dev server commands are `Command`s, not tasks, so sbt 2's task cache can't skip them.
@@ -124,6 +126,28 @@ Traps when writing browser checks (all hit here):
 - `surface-variant` is dark in the light theme; for neutral tracks use `rgba(var(--v-theme-on-surface), .12)`.
 - `v-data-table mobile-breakpoint="sm"` stacks rows on phones; `v-number-input` needs `:precision` for decimals and emits `null` when cleared.
 - No CSS reset any more: give `h1`/`p` explicit `ma-0` etc.
+- An unknown `mdi-*` name renders as blank space, with no error. Check new icon names against
+  `https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css` (`.mdi-name::before`).
+  `mdi-language-scala` does not exist.
+
+## Starter (`starter/`)
+
+A standalone sbt build (not part of the root build) that uses the published JitPack release, never the local
+code: `build.sbt` pins `"com.github.fancellu" % "scalajs-vue" % "<tag>"`, links into `public/js`
+(`scalaJSUseMainModuleInitializer`, so `Main.main` mounts the app; no exports), and `public/index.html` works
+straight from disk. `sbt run` there links, opens the page in the browser and watches (Scala.js's default `run` uses
+Node, which has no Vue: "Vuetify is not defined"). The CI job `starter` builds it, so a release that can't be used
+as a dependency turns CI red. Run it with `cd starter && sbt ~fastLinkJS`.
+
+## Releasing
+
+1. Push `master`; CI (`build` and `starter`) green.
+2. GitHub release with a new tag `vX.Y.Z` from `master`: "Publish release", not "Save draft".
+3. Open `https://jitpack.io/#fancellu/scalajs-vue/vX.Y.Z` to trigger the build. Its log must show
+   `Downloading sbt launcher 1.13.1` and only `scalajs-vue_sjs1_2.13` published. JitPack never rebuilds a tag:
+   if it fails, fix it, delete the release and tag, and cut a new tag.
+4. Then bump the tag in the README snippet, `starter/build.sbt` and `starter/README.md`, and push; the
+   `starter` CI job checks the new release from JitPack.
 
 ## Keep in step
 

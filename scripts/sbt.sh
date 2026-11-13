@@ -38,5 +38,4 @@ export PATH="$JAVA_HOME/bin:$TOOLS/sbt/bin:$PATH"
 java -version
 
 # --server: run sbt in this JVM; sbt 2's default thin client would leave a background sbt server running
-# (.sbtopts says the same; repeated here so the script doesn't depend on it)
 sbt --server -batch -Dsbt.color=false -Dsbt.supershell=false -Dsbt.log.noformat=true "$@"

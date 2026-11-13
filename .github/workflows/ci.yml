@@ -15,4 +15,21 @@ jobs:
           java-version: 21
           cache: sbt
       - uses: sbt/setup-sbt@v1
-      - run: sbt fastLinkJS fullLinkJS
+      - run: sbt --server fastLinkJS fullLinkJS
+
+  # Builds starter/ against the published JitPack release named in starter/build.sbt,
+  # so a release that can't be used as a dependency shows up here.
+  starter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: starter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+      - run: sbt --server fastLinkJS fullLinkJS
