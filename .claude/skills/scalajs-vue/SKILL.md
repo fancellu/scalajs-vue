@@ -24,7 +24,7 @@ names it `com.github.fancellu:scalajs-vue:<tag>`; a second published module woul
 | `examples/src/main/scala/example/vuetify/` | Vuetify examples, one self-contained file each; `Main.scala` = gallery `ScalaVue.main` + single page `ScalaVue.single` + the `examples` registry |
 | `examples/src/main/resources/` | Pages in `-dev`/`-opt` pairs: `index` (gallery), `demo` (`?demo=<id>`), `hello`; shared CSS `vuetify-examples.css`, `hello.css` |
 | `build.sbt` | Dev server commands, the `demos` list, and `dist` |
-| `vercel.json`, `scripts/vercel-build.sh` | Vercel deployment of `target/dist` |
+| `vercel.json`, `jitpack.yml`, `scripts/sbt.sh` | Hosted builds: Vercel (`sbt.sh dist`) and JitPack (`sbt.sh clean publishM2`), both with our own JDK + sbt launcher |
 | `project/DevServer.scala` | JDK `HttpServer` static server + `openBrowser` |
 | `scripts/` | Headless Chrome (CDP) tests and screenshot generator |
 | `EXAMPLES.md`, `docs/screenshots/` | Per-example docs with screenshots |
@@ -43,9 +43,11 @@ Always run sbt from the repo root.
 | `sbt dist` | `fullLinkJS` + static site in `target/dist` (`index.html` = gallery, `demo.html`, `hello.html`, CSS, `opt/`); what Vercel deploys |
 | `sbt clean publishM2` | What JitPack runs on a release tag; must publish only `scalajs-vue_sjs1_2.13`, a ~32 KB jar of `com/felstar/**` |
 
-Deploying: `vercel.json` (framework none, `outputDirectory: target/dist`, `cleanUrls`) runs
-`scripts/vercel-build.sh`, which downloads Temurin JDK 21 + the sbt launcher (Vercel's Amazon Linux 2023 image has no
-Java) and runs `sbt --server -batch dist`. `--server` matters: with sbt 2 the launcher otherwise starts a thin client
+Hosted builds never use the host's sbt: `scripts/sbt.sh <commands>` downloads Temurin JDK 21 + sbt launcher 1.13.1
+and runs `sbt --server -batch <commands>`. Vercel (`vercel.json`: framework none, `outputDirectory: target/dist`,
+`cleanUrls`) runs `sbt.sh dist`; its Amazon Linux 2023 image has no Java. JitPack (`jitpack.yml` `install:`) runs
+`sbt.sh clean publishM2`; its own launcher differs per build host and 1.6.x can't boot sbt 2 ("could not retrieve
+Scala 3.8.4"). A failed JitPack tag is never rebuilt by itself: fix, then cut a new tag. `--server` matters: with sbt 2 the launcher otherwise starts a thin client
 plus a background sbt server that outlives the build. Tested in a `public.ecr.aws/amazonlinux/amazonlinux:2023`
 container (add `tar gzip` there; Vercel's image has them). Vercel reads `vercel.json` (or `vercel.ts`), never YAML. New pages must be added to
 the `dist` command's page list. Test the output locally by serving `target/dist` at the site root and running

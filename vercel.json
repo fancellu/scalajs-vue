@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "",
-  "buildCommand": "bash scripts/vercel-build.sh",
+  "buildCommand": "bash scripts/sbt.sh dist",
   "outputDirectory": "target/dist",
   "cleanUrls": true
 }

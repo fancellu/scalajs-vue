@@ -106,7 +106,7 @@ demos.map { case (id, _) => addCommandAlias(s"demo${id.capitalize}", s"demo $id"
 Global / onUnload := (Global / onUnload).value.andThen { s => DevServer.stop(); s }
 
 // ---------------------------------------------------------------------------
-// Static site for hosting (Vercel: see vercel.json and scripts/vercel-build.sh)
+// Static site for hosting (Vercel: see vercel.json and scripts/sbt.sh)
 //
 //   sbt dist   fullLinkJS, then assemble target/dist:
 //                index.html  the Vuetify gallery (example.vuetify.Main, ScalaVue.main)

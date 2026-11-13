@@ -1,3 +1,7 @@
-# sbt 2 needs JDK 17+; JitPack defaults to JDK 8.
+# JitPack's own sbt launcher varies between build hosts (one used 1.10.7, another 1.6.1, which can't
+# boot sbt 2), so build with our own JDK and launcher instead. `install` replaces JitPack's default
+# build; publishM2 puts the artifacts in ~/.m2/repository, where JitPack collects them.
 jdk:
   - openjdk17
+install:
+  - bash scripts/sbt.sh clean publishM2

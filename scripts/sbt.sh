@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Vercel build command (see vercel.json). Vercel's build image (Amazon Linux 2023) has no Java,
-# so this fetches a JDK and the sbt launcher, then runs `sbt dist`, which links the optimized JS
-# and assembles the static site in target/dist with the Vuetify gallery as index.html.
-# Also works on any Linux box or CI runner with curl and tar.
+# Runs sbt with a known JDK and sbt launcher, on any Linux machine with curl and tar:
+#   bash scripts/sbt.sh <sbt commands...>
+#
+# Used by the hosted builds, which can't be trusted to provide a suitable sbt:
+#   vercel.json  -> bash scripts/sbt.sh dist                (Vercel's build image has no Java)
+#   jitpack.yml  -> bash scripts/sbt.sh clean publishM2     (JitPack's launcher varies by host, and
+#                                                           1.6.x can't boot sbt 2)
 set -euo pipefail
 
 TOOLS="${TMPDIR:-/tmp}/scalajs-vue-tools"
@@ -35,4 +38,5 @@ export PATH="$JAVA_HOME/bin:$TOOLS/sbt/bin:$PATH"
 java -version
 
 # --server: run sbt in this JVM; sbt 2's default thin client would leave a background sbt server running
-sbt --server -batch -Dsbt.color=false -Dsbt.supershell=false dist
+# (.sbtopts says the same; repeated here so the script doesn't depend on it)
+sbt --server -batch -Dsbt.color=false -Dsbt.supershell=false -Dsbt.log.noformat=true "$@"

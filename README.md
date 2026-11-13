@@ -8,7 +8,7 @@ project (Scala 2.13), using a release tag as the version:
 
 ```scala
 resolvers += "jitpack" at "https://jitpack.io"
-libraryDependencies += "com.github.fancellu" % "scalajs-vue" % "v3.5.2"
+libraryDependencies += "com.github.fancellu" % "scalajs-vue" % "v3.5.3"
 ```
 
 The published jar holds only the bindings (the `core` project); the examples aren't included. It brings
@@ -113,9 +113,10 @@ gallery (`example.vuetify.Main`), plus `demo.html?demo=<id>`, `hello.html`, the 
 Any static host can serve that folder.
 
 [`vercel.json`](vercel.json) builds it on Vercel: import the repository as a project and deploy, no
-settings needed. Vercel's build image has no Java, so [`scripts/vercel-build.sh`](scripts/vercel-build.sh)
+settings needed. Vercel's build image has no Java, so it runs [`scripts/sbt.sh`](scripts/sbt.sh)` dist`, which
 downloads a Temurin JDK 21 and the sbt launcher first, then runs `sbt --server -batch dist` (about 70 s
-from cold). With `cleanUrls` the pages are served as `/`, `/demo?demo=timer` and `/hello`. The script
+from cold). JitPack builds releases with the same script (`sbt.sh clean publishM2`, see `jitpack.yml`), as its own
+sbt launcher varies between build hosts. With `cleanUrls` the pages are served as `/`, `/demo?demo=timer` and `/hello`. The script
 also works on any Linux machine or CI runner with `curl` and `tar`.
 
 ## Moving from the Vue 2 bindings
