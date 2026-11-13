@@ -44,3 +44,7 @@ Temporary Items
 /bin/
 target/
 /.idea/
+.bsp/
+.metals/
+.bloop/
+.vscode/

@@ -1,0 +1,3 @@
+# sbt 2 needs JDK 17+; JitPack defaults to JDK 8.
+jdk:
+  - openjdk17
