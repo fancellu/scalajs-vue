@@ -8,7 +8,7 @@ project (Scala 2.13), using a release tag as the version:
 
 ```scala
 resolvers += "jitpack" at "https://jitpack.io"
-libraryDependencies += "com.github.fancellu" % "scalajs-vue" % "v3.5.3"
+libraryDependencies += "com.github.fancellu" % "scalajs-vue" % "v3.5.4"
 ```
 
 The published jar holds only the bindings (the `core` project); the examples aren't included. It brings

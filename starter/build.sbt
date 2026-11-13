@@ -8,7 +8,7 @@ scalaVersion := "2.13.18"
 scalacOptions ++= Seq("-deprecation", "-feature")
 
 resolvers += "jitpack" at "https://jitpack.io"
-libraryDependencies += "com.github.fancellu" % "scalajs-vue" % "v3.5.3"
+libraryDependencies += "com.github.fancellu" % "scalajs-vue" % "v3.5.4"
 
 // Run starter.Main.main when the script loads (it mounts the app)
 scalaJSUseMainModuleInitializer := true

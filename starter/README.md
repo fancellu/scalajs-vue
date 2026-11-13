@@ -26,7 +26,7 @@ Scala.js's usual `run` would execute the app in Node.js, which has no web page, 
 
 | File | What |
 | --- | --- |
-| `build.sbt` | Scala.js plugin, the JitPack resolver and `"com.github.fancellu" % "scalajs-vue" % "v3.5.3"`; links into `public/js` |
+| `build.sbt` | Scala.js plugin, the JitPack resolver and `"com.github.fancellu" % "scalajs-vue" % "v3.5.4"`; links into `public/js` |
 | `src/main/scala/starter/Main.scala` | The app: creates Vuetify, defines a component with `setup` (refs and a computed value), mounts it on `#app` |
 | `public/index.html` | Loads Vue, Vuetify, their CSS and fonts from CDNs, then `js/main.js` |
 
