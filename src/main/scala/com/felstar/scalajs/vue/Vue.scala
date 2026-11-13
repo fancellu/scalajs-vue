@@ -28,12 +28,37 @@ object Vue extends js.Object {
   def reactive[T <: js.Any](target: T): T = js.native
   def readonly[T <: js.Any](target: T): T = js.native
   def computed[T](getter: js.Function0[T]): Ref[T] = js.native
+  /** `computed({ get, set })`; its own name so a Scala lambda never has to pick between overloads. */
+  @JSName("computed")
+  def writableComputed[T](options: WritableComputedOptions[T]): Ref[T] = js.native
   def watch(source: js.Any, callback: WatchCallback, options: js.Object = js.native): WatchHandle = js.native
   def watchEffect(effect: js.Function0[Any]): WatchHandle = js.native
   def toRaw[T](proxy: T): T = js.native
   def unref[T](maybeRef: T | Ref[T]): T = js.native
   def isRef(value: js.Any): Boolean = js.native
   def isReactive(value: js.Any): Boolean = js.native
+  /** Stops Vue from wrapping `value` in a reactive proxy (useful for plain Scala objects held in `data`). */
+  def markRaw[T <: js.Any](value: T): T = js.native
+
+  // Composition API lifecycle hooks (call inside `setup`)
+  def onMounted(hook: js.Function0[Any]): Unit = js.native
+  def onBeforeUnmount(hook: js.Function0[Any]): Unit = js.native
+  def onUnmounted(hook: js.Function0[Any]): Unit = js.native
+}
+
+trait WritableComputedOptions[T] extends js.Object {
+  val get: js.Function0[T]
+  val set: js.Function1[T, Unit]
+}
+
+object WritableComputedOptions {
+  def apply[T](get: () => T, set: T => Unit): WritableComputedOptions[T] = {
+    val (g, s) = (get, set)
+    new WritableComputedOptions[T] {
+      val get: js.Function0[T] = () => g()
+      val set: js.Function1[T, Unit] = (v: T) => s(v)
+    }
+  }
 }
 
 /** Returned by `Vue.createApp`. Registration methods return the app so calls can be chained. */

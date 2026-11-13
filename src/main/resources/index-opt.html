@@ -1,94 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Scala.js+Vue.js sample application!</title>
   <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Scala.js + Vue examples</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23C2261D'/%3E%3Cpath d='M9 9l7 14 7-14' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@4.3.1/dist/vuetify.min.css"/>
   <style>
-  #demo li,
-  .demo li {
-	  cursor: pointer;
-	  color: #34495e;
-	  user-select: none;
-	}
-
-   #demo span.done,
-	.demo span.done {
-  	color: #7f8c8d;
-  	text-decoration: line-through;
-   }
-   .bar {
-	    transition: width 0.5s;
-	    height: 20px;
-	    background: black;
-	}
-
-  .fade-enter-active, .fade-leave-active {
-      transition: opacity .5s
-  }
-  .fade-enter-from, .fade-leave-to {
-      opacity: 0
-  }
-
+    /* Unlayered, so these sit on top of Vuetify's cascade layers. */
+    .page { max-width: 1040px; }
+    .tabular { font-variant-numeric: tabular-nums; }
+    .bar { transition: width .5s ease, background-color .5s ease; }
+    .search-field { min-width: 220px; max-width: 360px; }
+    .code-block {
+      margin: 0;
+      padding: 16px;
+      border-radius: 8px;
+      background: rgb(var(--v-theme-surface-light));
+      font-size: .875rem;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .drawing { cursor: crosshair; touch-action: manipulation; aspect-ratio: 600 / 360; }
+    .drawing .circle { cursor: pointer; transition: fill-opacity .15s ease; }
   </style>
 </head>
 <body>
 
-<!--  vue start-->
-<div id="demo">
-  <div style="float:left;height:400px;overflow: auto;">
-	  Title=<input v-model="title"/>
-
-        <transition-group name="fade" tag="ol">
-            <li v-for="(todo,index) in todos" :key="todo.id">
-              <span @click="todo.done = !todo.done" :class="{done: todo.done}">
-                {{todo.content}}
-                <button @click.stop="remove(index)">Remove</button>
-              </span>
-            </li>
-        </transition-group>
-
-	  Tasks# {{todos.length}}<BR/>
-	  N={{n}}<BR/>
-  </div>
-  <div style="padding-left:30px;height:400px;overflow: auto;width:30%"><pre>data JSON: {{ $data }}</pre></div>
-
-  <div style="clear:left">
-  Using a v-text directive title=<span v-text="title"></span>
-  <div>Smooth CSS animation:
-        <input type="button" value="+" @click="barValue += 50"/>
-        <input type="button" value="-" @click="barValue -= 50">
-    </div>
-   <div class="bar" :style="{ width: barValue + 'px' }"></div>
-  <div v-text="'Using a v-text directive with inline expression, title='+title"></div>
-  <div>Title reversed={{ reverse(title) }}</div>
-  <div>Title wrapper={{ wrap(title, '<<', '>>') }}</div>
-  <div v-mydirective="title">xx</div>
-  <my-component my-msg="hello">Special content</my-component>
-  <!---->
-  <button @click="clickHandler">Call clickHandler in Scala</button>
-  <button @click="n++">Increment N</button>
-  <!---->
-  <button @click="addTask">Add Task</button>
-  <button @click="change1st">Change 1st</button>
-  <button @click="remove(0)">Remove 1st</button>
-  <button @click="flipAll">Flip All</button><BR/><BR/>
-  Todos computed: {{ todosComputed }}
-  </div>
-</div>
-
+<div id="app"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.45/vue.global.prod.js"></script>
-
-<script type="text/javascript" src="opt/main.js"></script>
-
-<!--  vue end -->
+<script src="https://cdn.jsdelivr.net/npm/vuetify@4.3.1/dist/vuetify.min.js"></script>
+<script src="opt/main.js"></script>
 <script>
-
-    // we get DemoVue back from Scala, then use it
-    var demo = Todo.main();
-
-    demo.todos.push({id: "extra", done: false, content: "Extra task"})
-
+  // ScalaVue is exported from Scala (example.Main); it returns the root component instance
+  var app = ScalaVue.main("#app");
 </script>
 
 </body>
